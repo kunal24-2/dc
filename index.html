@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BrightMind – Your Mental Wellness Partner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
+  <style>
+    /* Always use accessible, calming colors per best practices */
+    :root{
+      --primary-bg:#eef6f7;
+      --secondary-bg:#f9fbfa;
+      --accent:#2fa89b; /* slightly darker for contrast */
+      --accent-strong:#238675;
+      --accent-light:#a3d8c6;
+      --text-primary:#27323a;
+      --text-muted:#6b7d85;
+      --white:#fff;
+      --glass: rgba(255,255,255,0.6);
+      --shadow: 0 6px 30px rgba(32,44,56,0.12);
+      --radius:12px;
+    }
+
+    /* Base */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body {
+      font-family: 'Poppins', Arial, Helvetica, sans-serif;
+      margin: 0;
+      background: linear-gradient(180deg,var(--primary-bg) 0%, var(--secondary-bg) 100%);
+      color:var(--text-primary);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.6;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:1rem 1.25rem;
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(6px);
+      position:sticky;
+      top:0;
+      z-index:50;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+    }
+    .logo{font-weight:700;color:var(--accent-strong);font-size:1.15rem}
+    nav{display:flex;gap:1rem;align-items:center}
+    nav a{color:var(--text-muted);text-decoration:none;padding:0.35rem 0.45rem;border-radius:8px;font-weight:600}
+    nav a:hover, nav a:focus{outline:none;background:var(--accent-light);color:var(--accent-strong)}
+    nav a[aria-current="page"]{color:var(--accent);font-weight:700}
+
+    /* Hero */
+    .hero{
+      display:flex;
+      gap:2rem;
+      align-items:center;
+      padding:2.25rem 1.25rem;
+      max-width:1100px;
+      margin:1.25rem auto;
+      background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(255,255,255,0.8));
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .hero-content{flex:1;min-width:240px}
+    .hero-image{flex:1;min-height:160px;background:linear-gradient(135deg,var(--accent-light),var(--accent));border-radius:10px;box-shadow: inset 0 -30px 50px rgba(255,255,255,0.06)}
+    .hero-title{font-size:1.6rem;margin:0 0 .5rem}
+    .hero-text{color:var(--text-muted);margin:0 0 1rem}
+    .hero-action{background:var(--accent);color:var(--white);border:none;padding:.6rem 1rem;border-radius:10px;cursor:pointer;font-weight:700}
+    .hero-action:focus{outline:3px solid rgba(35,134,117,0.15)}
+
+    /* CTA */
+    .cta{max-width:1100px;margin:1rem auto;padding:1.25rem;border-radius:var(--radius);text-align:center;background:var(--white);box-shadow:var(--shadow)}
+    .cta-title{font-weight:700;font-size:1.1rem}
+    .cta-action{margin-top:.75rem;padding:.65rem 1.1rem;border-radius:10px;border:none;background:var(--accent-strong);color:white;cursor:pointer}
+
+    /* Chat */
+    .chatbox{position:fixed;right:28px;bottom:28px;z-index:999;display:flex;flex-direction:column;align-items:flex-end;gap:.5rem}
+    .chat-btn{display:inline-flex;align-items:center;gap:.5rem;background:var(--accent);color:var(--white);padding:.6rem 1rem;border:none;border-radius:28px;font-size:0.98rem;cursor:pointer;box-shadow:0 6px 18px rgba(37,154,141,0.18);font-weight:700}
+    .chat-btn:focus{outline:3px solid rgba(35,134,117,0.15)}
+    .chat-window{
+      width:360px;
+      max-width:calc(100vw - 48px);
+      max-height:420px;
+      display:none;
+      flex-direction:column;
+      gap:.6rem;
+      padding:.8rem;
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      background:linear-gradient(180deg,var(--white), #fcfffd);
+      overflow:hidden;
+      transition:transform .22s ease,opacity .22s ease;
+      transform-origin:bottom right;
+    }
+    .chat-window.show{display:flex}
+    .chat-header{font-weight:700;color:var(--accent-strong);padding:.25rem 0}
+    #chat-history{overflow:auto;display:flex;flex-direction:column;gap:.6rem;padding:.25rem 0 .5rem;max-height:280px}
+    .chat-msg{padding:.5rem .75rem;border-radius:12px;max-width:78%;font-size:0.96rem;box-shadow:0 2px 10px rgba(18,30,40,.03)}
+    .chat-msg.user{align-self:flex-end;background:linear-gradient(90deg,var(--accent),var(--accent-strong));color:white}
+    .chat-msg.bot{align-self:flex-start;background:var(--secondary-bg);color:var(--text-primary)}
+    .chat-meta{font-size:0.75rem;color:var(--text-muted);margin-top:-.25rem}
+    .chat-input-wrap{display:flex;gap:.5rem;padding-top:.25rem}
+    .chat-input{flex:1;border-radius:10px;border:1px solid #d5dfe0;padding:.5rem .65rem;font-size:1rem}
+    .chat-input:focus{outline:3px solid rgba(35,134,117,0.12)}
+    .send-btn{background:var(--accent-strong);color:white;border:none;border-radius:10px;padding:.45rem .8rem;cursor:pointer}
+    .send-btn[disabled]{opacity:.6;cursor:not-allowed}
+
+    /* Accessibility & reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      *{transition:none!important;animation:none!important}
+    }
+
+    /* Responsive */
+    @media(max-width:880px){ .hero{flex-direction:column} nav{gap:.6rem} }
+    @media(max-width:520px){
+      header{padding:.6rem}
+      .chatbox{right:12px;bottom:12px}
+    }
+
+    /* live region visually hidden helper */
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo" aria-label="BrightMind">BrightMind</div>
+    <nav aria-label="Main navigation">
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="#resources">Resources</a>
+      <a href="#contact">Contact</a>
+      <a href="#get-help" style="color:var(--accent);font-weight:700;">Get Help</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ...hero, features, call-to-action, as before... -->
+    <section class="hero" aria-label="Hero section">
+      <div class="hero-content">
+        <h1 class="hero-title" id="hero-title">Your Journey to Mental Wellness Starts Here</h1>
+        <p class="hero-text" id="hero-text">
+          Evidence-based support, compassionate experts, and a community that cares. Discover resources, therapy, and guidance—all in a calming, trusted environment.
+        </p>
+        <button class="hero-action" id="personalize-btn">Personalize Welcome</button>
+        <button class="hero-action" id="announce-btn">Show Announcement</button>
+      </div>
+      <div class="hero-image" aria-hidden="true"></div>
+    </section>
+
+    <section class="features" id="services" aria-label="Key features">
+      <!-- same as before -->
+    </section>
+
+    <section class="cta" aria-label="Call to action">
+      <div class="cta-title">Ready to Take the First Step?</div>
+      <div class="cta-text">
+        Confidential. Secure. Available 24/7. Your mental health matters.<br>
+        <strong>Start your journey with BrightMind today.</strong>
+      </div>
+      <button class="cta-action">Begin Your Journey</button>
+    </section>
+
+    <section id="announcement" style="display:none; background:var(--accent-light); text-align:center; padding:1rem;" aria-live="polite">
+      <strong>Important news:</strong> Online group sessions every Friday at 6 PM! Join our caring community.
+    </section>
+  </main>
+
+  <!-- Dynamic Chat Component -->
+  <div class="chatbox">
+    <button class="chat-btn" id="chat-toggle" aria-expanded="false" aria-controls="chat-window" aria-label="Open Chat">💬 Chat Support</button>
+
+    <div class="chat-window" id="chat-window" role="region" aria-label="Live chat window" aria-hidden="true">
+      <div class="chat-header">How can we help?</div>
+      <div id="chat-history" aria-live="polite" aria-atomic="false">
+        <div class="chat-msg bot" style="background:var(--accent-light);font-weight:600;">Welcome! Need any help with your mental health journey?</div>
+      </div>
+
+      <form class="chat-input-wrap" id="chat-form" onsubmit="return false">
+        <input type="text" class="chat-input" id="chat-input" placeholder="Type your message..." autocomplete="off" aria-label="Type your message" />
+        <button type="button" id="send-btn" class="send-btn" disabled>Send</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="live-announcer" class="sr-only" aria-live="polite"></div>
+
+  <footer>
+    &copy; 2025 BrightMind &mdash; All rights reserved. | <a href="#accessibility" style="color:var(--accent);text-decoration:none;">Accessibility &amp; Privacy Policy</a>
+  </footer>
+
+  <script>
+    // Dynamic personalized welcome
+    document.getElementById('personalize-btn').addEventListener('click', function() {
+      const name = prompt('Enter your name to personalize your welcome!');
+      if(name) {
+        document.getElementById('hero-title').textContent = "Welcome, " + name + ". Your Mental Wellness Journey Starts Here";
+        document.getElementById('hero-text').textContent = "Dear " + name + ", we're here to support your wellbeing every step of the way.";
+      }
+    });
+
+    // Dynamic chat support interactions
+    (function(){
+      const LS_NAME_KEY = 'brightmind_name';
+      const LS_CHAT_KEY = 'brightmind_chat_v1';
+      const chatToggle = document.getElementById('chat-toggle');
+      const chatWindow = document.getElementById('chat-window');
+      const chatHistory = document.getElementById('chat-history');
+      const chatInput = document.getElementById('chat-input');
+      const sendBtn = document.getElementById('send-btn');
+      const personalizeBtn = document.getElementById('personalize-btn');
+      const announceBtn = document.getElementById('announce-btn');
+      const announcementEl = document.getElementById('announcement');
+      const liveAnnouncer = document.getElementById('live-announcer');
+
+      // Helper: save/load chat to localStorage
+      function saveChat(messages){
+        try { localStorage.setItem(LS_CHAT_KEY, JSON.stringify(messages)); } catch(e){/* ignore */ }
+      }
+      function loadChat(){
+        try {
+          const raw = localStorage.getItem(LS_CHAT_KEY);
+          return raw ? JSON.parse(raw) : null;
+        } catch(e){ return null; }
+      }
+
+      // render message array [{who:'user'|'bot', text:'', ts:...}]
+      function renderMessages(messages){
+        chatHistory.innerHTML = '';
+        messages.forEach(m => {
+          const d = document.createElement('div');
+          d.className = 'chat-msg ' + (m.who==='user' ? 'user' : 'bot');
+          d.textContent = m.text;
+          chatHistory.appendChild(d);
+        });
+        scrollBottom();
+      }
+
+      function addMessage(who, text){
+        if(!text || !text.trim()) return;
+        const now = Date.now();
+        const messages = loadChat() || [{who:'bot',text:'Welcome! Need any help with your mental health journey?',ts:now}];
+        messages.push({who, text, ts: now});
+        saveChat(messages);
+        renderMessages(messages);
+      }
+
+      function scrollBottom(){
+        requestAnimationFrame(()=> {
+          chatHistory.scrollTop = chatHistory.scrollHeight;
+        });
+      }
+
+      // initialize chat from storage
+      (function initChat(){
+        const saved = loadChat();
+        if(saved) renderMessages(saved);
+      })();
+
+      // UI interactions
+      chatToggle.addEventListener('click', ()=> {
+        const expanded = chatToggle.getAttribute('aria-expanded') === 'true';
+        chatToggle.setAttribute('aria-expanded', String(!expanded));
+        if(!expanded){
+          chatWindow.classList.add('show');
+          chatWindow.setAttribute('aria-hidden','false');
+          setTimeout(()=> chatInput.focus(), 150);
+        } else {
+          chatWindow.classList.remove('show');
+          chatWindow.setAttribute('aria-hidden','true');
+          chatToggle.focus();
+        }
+      });
+
+      // keyboard: ESC to close chat
+      document.addEventListener('keydown', (e)=>{
+        if(e.key === 'Escape'){
+          if(chatWindow.classList.contains('show')){
+            chatWindow.classList.remove('show');
+            chatWindow.setAttribute('aria-hidden','true');
+            chatToggle.setAttribute('aria-expanded','false');
+            chatToggle.focus();
+          }
+        }
+      });
+
+      // input enable/disable
+      chatInput.addEventListener('input', ()=>{
+        sendBtn.disabled = !chatInput.value.trim();
+      });
+
+      // send via button or Enter
+      sendBtn.addEventListener('click', handleSend);
+      chatInput.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter' && !e.shiftKey){
+          e.preventDefault();
+          if(!sendBtn.disabled) handleSend();
+        }
+      });
+
+      function handleSend(){
+        const text = chatInput.value.trim();
+        if(!text) return;
+        addMessage('user', text);
+        chatInput.value = '';
+        sendBtn.disabled = true;
+        // simulated bot reply with small delay and simple encouragement logic
+        setTimeout(()=> {
+          const botReply = generateBotReply(text);
+          addMessage('bot', botReply);
+          liveAnnouncer.textContent = 'New message from chat support';
+        }, 700 + Math.random() * 600);
+      }
+
+      // simple polite bot replies — keep non-clinical, supportive
+      function generateBotReply(userText){
+        const lowered = userText.toLowerCase();
+        if(/help|urgent|suicid|harm|crisis/.test(lowered)){
+          return "If you're in crisis or feeling unsafe, please contact local emergency services or a crisis line right now. If you'd like, I can share resources.";
+        }
+        if(/thanks|thank|thx/.test(lowered)) return "You're welcome — I'm here if you need anything else.";
+        if(/how|what|where|when/.test(lowered)) return "We offer therapy, group sessions, and resources. Which would you like to learn about?";
+        if(userText.length < 20) return "Thank you for sharing. Would you like resources, a therapist match, or someone to talk to?";
+        return "Thank you for reaching out. Remember, you are not alone. Consider contacting a professional if you need urgent help.";
+      }
+
+      // personalize welcome saved to localStorage and friendly time-aware greeting
+      personalizeBtn.addEventListener('click', ()=>{
+        const prev = localStorage.getItem(LS_NAME_KEY) || '';
+        const name = prompt('Enter your name to personalize your welcome!', prev);
+        if(name !== null){
+          const trimmed = name.trim();
+          if(trimmed){
+            localStorage.setItem(LS_NAME_KEY, trimmed);
+            applyPersonalizedGreeting(trimmed);
+          } else {
+            localStorage.removeItem(LS_NAME_KEY);
+            resetGreeting();
+          }
+        }
+      });
+
+      function applyPersonalizedGreeting(name){
+        const title = document.getElementById('hero-title');
+        const text = document.getElementById('hero-text');
+        const hour = new Date().getHours();
+        let timeword = 'Today';
+        if(hour < 12) timeword = 'This morning';
+        else if(hour < 18) timeword = 'This afternoon';
+        else timeword = 'This evening';
+        title.textContent = `Welcome, ${name}. Your Mental Wellness Journey Starts Here`;
+        text.textContent = `${timeword}, ${name}, we're here to support your wellbeing every step of the way.`;
+      }
+      function resetGreeting(){
+        document.getElementById('hero-title').textContent = 'Your Journey to Mental Wellness Starts Here';
+        document.getElementById('hero-text').textContent = "Evidence-based support, compassionate experts, and a community that cares. Discover resources, therapy, and guidance—all in a calming, trusted environment.";
+      }
+      // apply saved name on load
+      (function applySavedName(){
+        const saved = localStorage.getItem(LS_NAME_KEY);
+        if(saved) applyPersonalizedGreeting(saved);
+      })();
+
+      // announcement button
+      announceBtn.addEventListener('click', ()=> {
+        announcementEl.style.display = 'block';
+        announcementEl.setAttribute('aria-hidden', 'false');
+        liveAnnouncer.textContent = 'Announcement displayed: Online group sessions every Friday at 6 PM.';
+        // auto-hide after 8s for tidy UI
+        setTimeout(()=> {
+          announcementEl.style.display = 'none';
+          announcementEl.setAttribute('aria-hidden', 'true');
+        }, 8000);
+      });
+
+      // keep last focused element when opening/closing chat (small focus management)
+      // messages survive reload via localStorage
+
+    })();
+  </script>
+</body>
+</html>
